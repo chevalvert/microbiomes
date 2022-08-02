@@ -1,0 +1,21 @@
+@font-face {
+  font-family: 'Styrene';
+  font-display: auto;
+  src:
+    url('fonts/styrenea-regular.woff2') format('woff2'),
+    url('fonts/styrenea-regular.woff') format('woff'),
+    url('fonts/styrenea-regular.otf') format('opentype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Styrene';
+  font-display: auto;
+  src:
+    url('fonts/styrenea-regularitalic.woff2') format('woff2'),
+    url('fonts/styrenea-regularitalic.woff') format('woff'),
+    url('fonts/styrenea-regularitalic.otf') format('opentype');
+  font-style: italic;
+  font-weight: normal;
+}

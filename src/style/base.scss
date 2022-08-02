@@ -1,0 +1,34 @@
+*,
+*::before,
+*::after { box-sizing: inherit; }
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+
+  background: var(--background);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+img {
+  @include no-select;
+  border: 0;
+  -ms-interpolation-mode: bicubic;
+  vertical-align: bottom;
+  width: 100%;
+  height: auto;
+}
