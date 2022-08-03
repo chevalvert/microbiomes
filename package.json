@@ -5,9 +5,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon server/index.js --watch server --watch src/templates/*.hbs",
     "build": "cross-env NODE_ENV=production webpack build --config webpack.config.js",
-    "deploy": "cross-env APP_ENV=production npm run build && mkdir tmp && cp package.json tmp/package.json && cp yarn.lock tmp/yarn.lock && ghp tmp README.md -a server -a build -a static -a shared -a .github -f -b production -m ':rocket: production' && rm -rf tmp",
-    "deploy:preprod": "cross-env APP_ENV=preprod npm run build && mkdir tmp && cp package.json tmp/package.json && cp yarn.lock tmp/yarn.lock && ghp tmp README.md -a server -a build -a static -a shared -a .github -f -b preprod -m ':construction: preprod' && rm -rf tmp",
-    "postversion": "git push && git push --tags && npm run deploy"
+    "postversion": "git push && git push --tags"
   },
   "author": "Arnaud Juracek",
   "license": "MIT",
@@ -51,6 +49,7 @@
     "chalk": "4.x",
     "dotenv": "^16.0.1",
     "express": "^4.17.2",
+    "express-fileupload": "^1.4.0",
     "express-session": "^1.17.3",
     "fs-extra": "^10.0.0",
     "handlebars": "^4.7.7",

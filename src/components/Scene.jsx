@@ -70,4 +70,18 @@ export default class Scene extends Component {
   clear () {
     this.state.debugContext.clearRect(0, 0, this.width, this.height)
   }
+
+  toDataURL () {
+    const { width, height } = this.refs.canvas.getBoundingClientRect()
+
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+
+    const ctx = canvas.getContext('2d')
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(this.refs.canvas, 0, 0, canvas.width, canvas.height)
+
+    return canvas.toDataURL()
+  }
 }

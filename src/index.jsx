@@ -14,6 +14,7 @@ require('webpack-hot-middleware/client?reload=true')
   .subscribe(({ reload }) => reload && window.location.reload())
 /// #endif
 
+let scene
 const u = 5
 const BACKGROUND = 'black'
 const COLORS = [
@@ -32,7 +33,7 @@ const COLORS = [
 ;(async () => {
   Raf.start()
 
-  const scene = render(<Scene resolution={u} />, document.body).components[0]
+  scene = render(<Scene resolution={u} />, document.body).components[0]
   render(<h1>Microbiomes</h1>, document.body)
   document.body.classList.remove('is-loading')
 
@@ -52,8 +53,6 @@ const COLORS = [
     })
     shifters.push(shifter)
   }
-
-
 
   Store.raf.frameCount.subscribe(tick)
 
@@ -87,7 +86,13 @@ const COLORS = [
   }
 })()
 
-Hotkey({
-  key: 'w',
-  callback: () => Store.scene.showDebugOverlay.update(state => !state)
+Hotkey('w', () => Store.scene.showDebugOverlay.update(state => !state))
+
+/// #if DEVELOPMENT
+Hotkey('cmd+k', async () => {
+  const body = new window.FormData()
+  body.append('image', scene.toDataURL())
+  await window.fetch('/dev/snapshot', { method: 'POST', body })
+  console.log('Snapshot successfully taken')
 })
+/// #endif
