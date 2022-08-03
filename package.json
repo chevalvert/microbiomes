@@ -55,6 +55,8 @@
     "handlebars": "^4.7.7",
     "hotkeys-js": "^3.9.4",
     "missing-math": "^3.2.0",
+    "noisejs": "^2.1.0",
+    "poly-bool": "^1.0.0",
     "reconnectingwebsocket": "^1.0.0",
     "session-file-store": "^1.5.0",
     "ws": "^8.8.1"

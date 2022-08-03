@@ -15,7 +15,7 @@ require('webpack-hot-middleware/client?reload=true')
 /// #endif
 
 let scene
-const u = 5
+const u = 3
 const BACKGROUND = 'black'
 const COLORS = [
   // '#9eb04c',
@@ -41,11 +41,19 @@ const COLORS = [
   scene.context.fillStyle = BACKGROUND
   scene.context.fillRect(0, 0, scene.width, scene.height)
 
-  grid()
+  // noise()
+  // grid()
 
   // Population
   const shifters = []
-  for (let i = 0; i < 20; i++) {
+
+  shifters.push(new Shifter(scene, {
+    position: [scene.width / 2, scene.height / 2],
+    bounds: [scene.width, scene.height],
+    size: 20
+  }))
+
+  for (let i = 0; i < 100; i++) {
     const shifter = new Shifter(scene, {
       position: [random(0, scene.width), random(0, scene.height)].map(Math.floor),
       bounds: [scene.width, scene.height],
@@ -65,13 +73,38 @@ const COLORS = [
   // }, 3000)
 
   window.addEventListener('click', e => {
-    Store.raf.isRunning.update(state => !state)
+    const [i, j] = scene.screenToWorld(e.pageX, e.pageY)
+
+    grid([i, j], [30, 30])
+
+    // for (let index = 0; index < 200; index++) {
+    //   scene.context.fillStyle = randomOf(COLORS)
+    //   const xoff = random(-20, 20)
+    //   const yoff = random(-20, 20)
+    //   scene.context.fillRect(Math.floor(i + xoff), Math.floor(j + yoff), 1, 1)
+    // }
+
+    // shifters.push(new Shifter(scene, {
+    //   position: scene.screenToWorld(e.pageX, e.pageY),
+    //   bounds: [scene.width, scene.height],
+    //   size: 10
+    // }))
   })
 
-  function grid () {
+  function grid ([istart, jstart] = [0, 0], [w, h] = [scene.width, scene.height]) {
+    for (let i = istart; i < istart + w; i++) {
+      for (let j = jstart; j < jstart + h; j++) {
+        scene.context.fillStyle = i % 2 !== j % 2 ? randomOf(COLORS) : BACKGROUND
+        scene.context.fillRect(i, j, u, u)
+      }
+    }
+  }
+
+  function noise () {
     for (let i = 0; i < scene.width; i++) {
       for (let j = 0; j < scene.height; j++) {
-        scene.context.fillStyle = i % 2 !== j % 2 ? randomOf(COLORS) : BACKGROUND
+        const n = scene.noise(i, j)
+        scene.context.fillStyle = COLORS[Math.floor(Math.abs(n) * COLORS.length)]
         scene.context.fillRect(i, j, u, u)
       }
     }
@@ -87,6 +120,7 @@ const COLORS = [
 })()
 
 Hotkey('w', () => Store.scene.showDebugOverlay.update(state => !state))
+Hotkey('p', () => Store.raf.isRunning.update(state => !state))
 
 /// #if DEVELOPMENT
 Hotkey('cmd+k', async () => {
