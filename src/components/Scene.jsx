@@ -1,17 +1,27 @@
 import Store from 'store'
+import classnames from 'classnames'
 import { Noise } from 'noisejs'
 import { Component } from 'utils/jsx'
-import { writable } from 'utils/state'
+import capitalize from 'utils/capitalize'
+import { roundTo } from 'missing-math'
+import noop from 'utils/noop'
 
 const CACHE = new Map()
+const ROUNDABLE_METHODS = [
+  'arc',
+  'translate',
+  'drawImage',
+  'fillRect',
+  'fillText',
+  'lineTo',
+  'moveTo'
+]
 
 export default class Scene extends Component {
   beforeRender (props) {
+    this.handleResize = this.handleResize.bind(this)
     this.state = {
-      width: writable(window.innerWidth / props.resolution),
-      height: writable(window.innerHeight / props.resolution),
-      context: undefined,
-      debugContext: undefined,
+      contexts: new Map(),
       noiseMap: new Noise() // TODO: seed
     }
   }
@@ -23,41 +33,64 @@ export default class Scene extends Component {
         class='scene'
         store-class-has-debug-overlay={Store.scene.showDebugOverlay}
       >
-        <canvas
-          ref={this.ref('canvas')}
-          store-width={state.width}
-          store-height={state.height}
-        />
-        <canvas
-          ref={this.ref('debug')}
-          class='scene__debug'
-          width={window.innerWidth}
-          height={window.innerHeight}
-        />
+        {Object.entries(Store.scene.layers.current).map(([name, { smooth }]) => (
+          <canvas
+            id={capitalize(name)}
+            class={classnames('scene__canvas--' + name, { pixelated: !smooth })}
+            ref={this.refMap('canvas', name)}
+          />
+        ))}
       </section>
     )
   }
 
-  get width () { return this.refs.canvas.width }
-  get height () { return this.refs.canvas.height }
-  get context () { return this.state.context }
+  getContext (name) {
+    return this.state.contexts.get(name)
+  }
 
   afterRender () {
-    // TODO
-    // window.addEventListener('resize', this.handleResize)
-
+    window.addEventListener('resize', this.handleResize)
   }
 
   afterMount () {
-    this.state.context = this.refs.canvas.getContext('2d')
-    this.state.context.imageSmoothingEnabled = false
+    this.#forEachLayers((canvas, context, { name, smooth, resolution, round }) => {
+      canvas.width = window.innerWidth * resolution
+      canvas.height = window.innerHeight * resolution
+      canvas.resolution = 1 / resolution
 
-    this.state.debugContext = this.refs.debug.getContext('2d')
-    this.state.debugContext.scale(this.props.resolution, this.props.resolution)
+      context = context || canvas.getContext('2d')
+      context.imageSmoothingEnabled = smooth
+      context.scale(resolution, resolution)
+      context.round = v => isNaN(v) ? v : roundTo(v, 1 / resolution)
+
+      if (round) {
+        for (const method of ROUNDABLE_METHODS) {
+          const origin = context[method]
+          context[method] = (...args) => origin.call(context, ...args.map(context.round))
+        }
+      }
+      this.state.contexts.set(name, context)
+    })
   }
 
   clear () {
-    this.state.debugContext.clearRect(0, 0, this.width, this.height)
+    this.#forEachLayers((canvas, context, { clear }) => {
+      if (!clear) return
+      context.clearRect(0, 0, window.innerWidth, window.innerHeight)
+    })
+  }
+
+  handleResize () {
+    this.log('TODO: handleResize')
+  }
+
+  #forEachLayers (callback = noop) {
+    const layers = Store.scene.layers.get()
+    for (const name in layers) {
+      const canvas = this.refs.canvas.get(name)
+      const context = this.state.contexts.get(name)
+      callback(canvas, context, { ...layers[name], name })
+    }
   }
 
   debug (position, {
@@ -66,7 +99,7 @@ export default class Scene extends Component {
     color = 'cyan',
     path
   } = {}) {
-    const ctx = this.state.debugContext
+    const ctx = this.state.contexts.get('debug')
 
     ctx.strokeStyle = color
 
@@ -75,48 +108,45 @@ export default class Scene extends Component {
       ctx.translate(position[0], position[1])
       ctx.stroke(path)
       ctx.restore()
-    } else ctx.strokeRect(position[0], position[1], dimensions[0], dimensions[1])
+    } else ctx.strokeRect(position[0] - dimensions[0] / 2, position[1] - dimensions[1] / 2, dimensions[0], dimensions[1])
 
     if (!text) return
     ctx.fillStyle = color
-    ctx.font = '4px monospace'
-    ctx.fillText(text, position[0] + dimensions[0] / 2 - this.measureText(text) / 2, position[1] + dimensions[1] / 2 - 1)
+    ctx.lineWidth = 3
+    ctx.font = '20px Styrene'
+    ctx.fillText(text, position[0] - this.measureText(text) / 2, position[1])
   }
 
-  measureText (text) {
-    if (CACHE.has(text)) return CACHE.get(text)
+  measureText (text, layerName = 'debug') {
+    const id = layerName + '__' + text
+    if (CACHE.has(id)) return CACHE.get(id)
 
-    const { width } = this.state.debugContext.measureText(text)
-    CACHE.set(text, width)
+    const { width } = this.getContext(layerName).measureText(text)
+    CACHE.set(id, width)
     return width
   }
 
   noise (i, j, {
     noise = 'perlin',
-    octaves = 7
+    octaves = 8
   } = {}) {
     const res = 2 ** octaves
     if (!j && j !== 0) j = Store.raf.frameCount.current
     return this.state.noiseMap[noise + '2'](i / res, j / res)
   }
 
-  screenToWorld (x, y) {
-    return [
-      Math.round(x / this.props.resolution),
-      Math.round(y / this.props.resolution)
-    ]
-  }
-
   toDataURL () {
-    const { width, height } = this.refs.canvas.getBoundingClientRect()
-
     const canvas = document.createElement('canvas')
-    canvas.width = width
-    canvas.height = height
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
 
     const ctx = canvas.getContext('2d')
     ctx.imageSmoothingEnabled = false
-    ctx.drawImage(this.refs.canvas, 0, 0, canvas.width, canvas.height)
+
+    this.#forEachLayers((c, context, { exportable }) => {
+      if (!exportable) return
+      ctx.drawImage(c, 0, 0, canvas.width, canvas.height)
+    })
 
     return canvas.toDataURL()
   }

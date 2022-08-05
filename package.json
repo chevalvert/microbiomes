@@ -47,6 +47,7 @@
   "dependencies": {
     "@internet/raf": "^0.2.1",
     "chalk": "4.x",
+    "classnames": "^2.3.1",
     "dotenv": "^16.0.1",
     "express": "^4.17.2",
     "express-fileupload": "^1.4.0",

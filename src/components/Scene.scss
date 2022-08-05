@@ -6,18 +6,23 @@
     @include inset;
     width: 100%;
     height: 100%;
+  }
 
+  canvas.pixelated {
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
   }
 
+  // &__canvas--trace { opacity: 0; }
+  // &__canvas--creatures { opacity: 0; }
+
   // canvas:first-child {
   //   display: none;
   // }
 
-  &.has-debug-overlay &__debug {
+  &.has-debug-overlay &__canvas--debug {
     display: none;
   }
 }

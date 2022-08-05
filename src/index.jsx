@@ -1,6 +1,6 @@
 import Store from 'store'
 import { render } from 'utils/jsx'
-import { random } from 'missing-math'
+import { random, roundTo } from 'missing-math'
 import randomOf from 'utils/array-random'
 
 import Shifter from 'abstractions/Shifter'
@@ -15,7 +15,6 @@ require('webpack-hot-middleware/client?reload=true')
 /// #endif
 
 let scene
-const u = 3
 const BACKGROUND = 'black'
 const COLORS = [
   // '#9eb04c',
@@ -33,31 +32,29 @@ const COLORS = [
 ;(async () => {
   Raf.start()
 
-  scene = render(<Scene resolution={u} />, document.body).components[0]
+  scene = render(<Scene />, document.body).components[0]
   render(<h1>Microbiomes</h1>, document.body)
   document.body.classList.remove('is-loading')
 
   // Background
-  scene.context.fillStyle = BACKGROUND
-  scene.context.fillRect(0, 0, scene.width, scene.height)
+  const TRACE = scene.getContext('trace')
+  TRACE.fillStyle = BACKGROUND
+  TRACE.fillRect(0, 0, window.innerWidth, window.innerHeight)
 
   // noise()
   // grid()
 
   // Population
   const shifters = []
-
   shifters.push(new Shifter(scene, {
-    position: [scene.width / 2, scene.height / 2],
-    bounds: [scene.width, scene.height],
-    size: 20
+    position: [window.innerWidth / 2, window.innerHeight / 2],
+    size: random(50, 150)
   }))
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 30; i++) {
     const shifter = new Shifter(scene, {
-      position: [random(0, scene.width), random(0, scene.height)].map(Math.floor),
-      bounds: [scene.width, scene.height],
-      size: 20
+      position: [random(0, window.innerWidth), random(0, window.innerHeight)],
+      size: 100
     })
     shifters.push(shifter)
   }
@@ -73,9 +70,7 @@ const COLORS = [
   // }, 3000)
 
   window.addEventListener('click', e => {
-    const [i, j] = scene.screenToWorld(e.pageX, e.pageY)
-
-    grid([i, j], [30, 30])
+    grid([e.pageX, e.pageY], [100, 100])
 
     // for (let index = 0; index < 200; index++) {
     //   scene.context.fillStyle = randomOf(COLORS)
@@ -91,21 +86,36 @@ const COLORS = [
     // }))
   })
 
-  function grid ([istart, jstart] = [0, 0], [w, h] = [scene.width, scene.height]) {
-    for (let i = istart; i < istart + w; i++) {
-      for (let j = jstart; j < jstart + h; j++) {
-        scene.context.fillStyle = i % 2 !== j % 2 ? randomOf(COLORS) : BACKGROUND
-        scene.context.fillRect(i, j, u, u)
+  // window.addEventListener('mousemove', e => {
+  //   // const [i, j] = scene.screenToWorld(e.pageX, e.pageY)
+  //   window.requestAnimationFrame(() => {
+  //     scene.clear()
+  //     shifters[0].position = [e.pageX, e.pageY]
+  //     shifters[0].update()
+  //     shifters[0].render()
+  //   })
+  // })
+
+  function grid ([xstart, ystart] = [0, 0], [w, h] = [window.innerWidth, window.innerHeight]) {
+    const u = TRACE.canvas.resolution
+    for (let x = xstart; x < xstart + w; x += u) {
+      for (let y = ystart; y < ystart + h; y += u) {
+        TRACE.fillStyle = Math.round(x / u) % 2 !== Math.round(y / u) % 2
+          ? randomOf(COLORS)
+          : BACKGROUND
+        TRACE.fillRect(x, y, u, u)
       }
     }
   }
 
   function noise () {
-    for (let i = 0; i < scene.width; i++) {
-      for (let j = 0; j < scene.height; j++) {
-        const n = scene.noise(i, j)
-        scene.context.fillStyle = COLORS[Math.floor(Math.abs(n) * COLORS.length)]
-        scene.context.fillRect(i, j, u, u)
+    const u = TRACE.canvas.resolution
+    for (let i = 0; i < window.innerWidth / u; i++) {
+      for (let j = 0; j < window.innerHeight / u; j++) {
+        TRACE.fillStyle = `hsl(${roundTo((j * u / window.innerHeight) * 180, 10)}, ${roundTo((((i * u) / (window.innerWidth))) * 100, 10)}%, 70%)`
+        // const n = scene.noise(i * u, j * u)
+        // TRACE.fillStyle = COLORS[Math.floor(Math.abs(n) * COLORS.length)]
+        TRACE.fillRect(i * u, j * u, u, u)
       }
     }
   }
