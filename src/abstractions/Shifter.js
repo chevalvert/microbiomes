@@ -16,7 +16,7 @@ function makePath2D (points, { close = true } = {}) {
 const SHAPES = {
   blob: function (radius, resolution = 1) {
     let polygon
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       const x = roundTo(randomInt(-radius, 0), resolution)
       const y = roundTo(randomInt(-radius, 0), resolution)
       const w = roundTo(randomInt(radius - x), resolution)
@@ -90,12 +90,12 @@ export default class Shifter {
     const creatures = this.scene.getContext('creatures')
 
     // WIP
-    // creatures.save()
-    // creatures.strokeStyle = 'red'
-    // creatures.lineWidth = creatures.canvas.resolution
-    // creatures.translate(this.position[0], this.position[1])
-    // creatures.stroke(this.path)
-    // creatures.restore()
+    creatures.save()
+    creatures.fillStyle = '#f25700'
+    creatures.lineWidth = creatures.canvas.resolution
+    creatures.translate(this.position[0], this.position[1])
+    creatures.fill(this.path)
+    creatures.restore()
 
     trace.save()
     trace.translate(this.position[0], this.position[1])
@@ -121,9 +121,9 @@ export default class Shifter {
     })
 
     // Render bbox
-    this.scene.debug(this.position, {
-      color: 'blue',
-      dimensions: [this.size, this.size]
-    })
+    // this.scene.debug(this.position, {
+    //   color: 'blue',
+    //   dimensions: [this.size, this.size]
+    // })
   }
 }

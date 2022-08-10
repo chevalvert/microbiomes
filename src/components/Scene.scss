@@ -15,13 +15,6 @@
     image-rendering: crisp-edges;
   }
 
-  // &__canvas--trace { opacity: 0; }
-  // &__canvas--creatures { opacity: 0; }
-
-  // canvas:first-child {
-  //   display: none;
-  // }
-
   &.has-debug-overlay &__canvas--debug {
     display: none;
   }
