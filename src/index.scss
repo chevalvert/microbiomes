@@ -19,32 +19,6 @@
 @include html-no-scroll;
 
 @import 'style/base';
+
+@import 'components/App';
 @import 'components/Scene';
-
-h1 {
-  @include no-select;
-  color: white;
-  position: fixed;
-  z-index: 2;
-  font-weight: normal;
-
-  top: 50%;
-  left: 50%;
-  font-size: 16vw;
-  transform: translate(-50%, -50%);
-  line-height: 1;
-
-  mix-blend-mode: color-dodge;
-
-  span:last-child {
-    float: right;
-  }
-}
-
-.scene {
-  background: black;
-}
-
-.scene__canvas--creatures {
-  mix-blend-mode: color;
-}

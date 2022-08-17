@@ -19,7 +19,7 @@
   <link rel='stylesheet' href='bundle.css'>
   {{/if}}
 </head>
-<body class='is-loading' data-env='{{ env }}'>
+<body data-env='{{ env }}'>
   <noscript>JavaScript doit être activé pour pouvoir utiliser cette application.</noscript>
   <script type='text/javascript'>
     window.ENV = Object.assign({{{json app}}}, { env: '{{env}}' })

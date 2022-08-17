@@ -15,7 +15,7 @@
     image-rendering: crisp-edges;
   }
 
-  &.has-debug-overlay &__canvas--debug {
+  &.has-debug-overlay canvas[data-name=debug] {
     display: none;
   }
 }
