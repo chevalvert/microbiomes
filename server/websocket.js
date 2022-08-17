@@ -10,17 +10,22 @@ wss.on('connection', async (ws, req) => {
   map.set(id, ws)
   ws.send(JSON.stringify({ event: 'connection', message: id }))
   ws.on('close', () => map.delete(id))
+
+  ws.on('message', data => broadcast(data.toString(), ws))
 })
+
+function broadcast (message, client) {
+  for (const c of wss.clients) {
+    if (c !== client) c.send(message)
+  }
+}
 
 module.exports = {
   handleUpgrade: (req, socket, head) => {
     wss.handleUpgrade(req, socket, head, ws => wss.emit('connection', ws, req))
   },
 
-  broadcast: message => {
-    for (const client of wss.clients) client.send(message)
-  },
-
+  broadcast,
   send: (id, message) => {
     const ws = map.get(id)
     if (ws) ws.send(message)

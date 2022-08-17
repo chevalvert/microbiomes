@@ -22,6 +22,7 @@ module.exports = template => (req, res, next) => {
     const html = render({
       app,
       pkg,
+      id: req.params.id || 0,
       env: process.env.NODE_ENV,
       isProduction: process.env.NODE_ENV === 'production'
     })

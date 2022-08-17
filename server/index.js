@@ -15,6 +15,7 @@ const session = require('express-session')
 const Websocket = require('./websocket')
 const FileStore = require('session-file-store')(session)
 const logger = require('./utils/logger')
+const render = require('./api/render')
 
 const app = express()
 const server = http.createServer(app)
@@ -95,7 +96,8 @@ app.use(express.static(path.join(__dirname, '..', 'static')))
 app.use('/api/ping', (req, res) => res.status(200).json({ version: pkg.version }))
 
 // Setup front routes
-app.use('/', require('./api/render')('index.hbs'))
+app.use(['/remote/:id', '/remote'], render('remote.hbs'))
+app.use(['/:id', '/'], render('main.hbs'))
 
 // Log errors
 app.use((error, req, res, next) => {

@@ -6,14 +6,14 @@ const RemovePlugin = require('remove-files-webpack-plugin')
 const isProduction = (process.env.NODE_ENV === 'production')
 
 module.exports = {
-  entry: [
-    path.join(__dirname, 'src', 'index.jsx'),
-    path.join(__dirname, 'src', 'index.scss')
-  ],
+  entry: {
+    main: [path.join(__dirname, 'src', 'templates', 'main.jsx'), path.join(__dirname, 'src', 'index.scss')],
+    remote: [path.join(__dirname, 'src', 'templates', 'remote.jsx'), path.join(__dirname, 'src', 'index.scss')]
+  },
 
   output: {
     publicPath: '/',
-    filename: 'bundle.js',
+    filename: '[name].js',
     path: path.join(__dirname, isProduction ? 'build' : 'src')
   },
 

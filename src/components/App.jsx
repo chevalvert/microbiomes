@@ -2,18 +2,14 @@ import Store from 'store'
 import { Component } from 'utils/jsx'
 import { readable } from 'utils/state'
 
-import Scene from 'components/Scene'
+import Renderer from 'components/Renderer'
 
 export default class App extends Component {
-  beforeRender () {
-    this.handleResize = this.handleResize.bind(this)
-  }
-
   template () {
     return (
       <main id='App' class='app'>
-        <Scene ref={this.ref('scene')} />
-        <h1 class='copied-on-trace'>
+        <Renderer ref={this.ref('renderer')} />
+        <h1 class='drawn-on-trace'>
           <div>generative</div>
           <div>graphic</div>
           <div>drift</div>
@@ -22,20 +18,7 @@ export default class App extends Component {
     )
   }
 
-  afterRender () {
-    window.addEventListener('resize', this.handleResize)
-  }
-
   afterMount () {
-    Store.scene.instance = readable(this.refs.scene)
-
-    // WIP: rendered too late
-    // for (const element of this.refs.texts) {
-    //   this.refs.scene.renderTextElement(element, 'trace')
-    // }
-  }
-
-  handleResize () {
-    this.log('TODO: handleResize')
+    Store.renderer.instance = readable(this.refs.renderer)
   }
 }

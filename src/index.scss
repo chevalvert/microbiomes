@@ -21,4 +21,23 @@
 @import 'style/base';
 
 @import 'components/App';
-@import 'components/Scene';
+@import 'components/Renderer';
+
+body[data-template='remote'] {
+  @include no-select;
+  padding: var(--gutter);
+  display: flex;
+  gap: var(--gutter);
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+
+  @include portrait {
+    flex-direction: column;
+  }
+
+  button {
+    cursor: pointer;
+    padding: var(--gutter);
+  }
+}

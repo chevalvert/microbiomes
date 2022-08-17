@@ -16,7 +16,7 @@ const ROUNDABLE_METHODS = [
   'moveTo'
 ]
 
-export default class Scene extends Component {
+export default class Renderer extends Component {
   beforeRender (props) {
     this.state = {
       contexts: new Map(),
@@ -27,11 +27,11 @@ export default class Scene extends Component {
   template (props, state) {
     return (
       <section
-        id='Scene'
-        class='scene'
-        store-class-has-debug-overlay={Store.scene.showDebugOverlay}
+        id='Renderer'
+        class='renderer'
+        store-class-has-debug-overlay={Store.renderer.showDebugOverlay}
       >
-        {Object.entries(Store.scene.layers.current).map(([name, { smooth }]) => (
+        {Object.entries(Store.renderer.layers.current).map(([name, { smooth }]) => (
           <canvas
             data-name={name}
             class={classnames({ pixelated: !smooth })}
@@ -111,13 +111,16 @@ export default class Scene extends Component {
         ctx.translate(position[0], position[1])
         ctx.stroke(path)
         ctx.restore()
-      } else ctx.strokeRect(position[0] - dimensions[0] / 2, position[1] - dimensions[1] / 2, dimensions[0], dimensions[1])
+      } else {
+        ctx.strokeRect(position[0] - dimensions[0] / 2, position[1] - dimensions[1] / 2, dimensions[0], dimensions[1])
+      }
 
-      if (!text) return
-      ctx.fillStyle = color
-      ctx.lineWidth = 3
-      ctx.font = '20px Styrene'
-      ctx.fillText(text, position[0] - this.#measureText(text) / 2, position[1])
+      if (text) {
+        ctx.fillStyle = color
+        ctx.lineWidth = 3
+        ctx.font = '20px Styrene'
+        ctx.fillText(text, position[0] - this.#measureText(text) / 2, position[1])
+      }
     })
   }
 
@@ -131,7 +134,7 @@ export default class Scene extends Component {
   }
 
   #forEachLayers (callback = noop) {
-    const layers = Store.scene.layers.get()
+    const layers = Store.renderer.layers.get()
     for (const name in layers) {
       const canvas = this.refs.canvas.get(name)
       const context = this.state.contexts.get(name)
@@ -156,7 +159,7 @@ export default class Scene extends Component {
     const ctx = canvas.getContext('2d')
     ctx.imageSmoothingEnabled = false
 
-    this.#forEachLayers((c, context, { exportable }) => {
+    this.#forEachLayers((c, _, { exportable }) => {
       if (!exportable) return
       ctx.drawImage(c, 0, 0, canvas.width, canvas.height)
     })

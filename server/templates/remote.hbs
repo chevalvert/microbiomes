@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang='{{app.lang}}'>
+<head>
+  <meta charset='utf-8'>
+  {{#if publicPath}}<base href='{{publicPath}}'>{{/if}}
+  <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui' />
+  <meta name='theme-color' content='{{app.theme}}' />
+
+  <title>{{app.title}} | {{pkg.version}}{{#unless isProduction}} | {{env}}{{/unless}}</title>
+
+  <style type='text/css'>
+    :root {
+      --theme: {{app.theme}};
+    }
+  </style>
+
+  {{#if isProduction}}
+  <link rel='stylesheet' href='bundle.css'>
+  {{/if}}
+</head>
+<body data-template='remote' data-env='{{ env }}'>
+  <noscript>JavaScript doit être activé pour pouvoir utiliser cette application.</noscript>
+  <script type='text/javascript'>
+    window.ENV = Object.assign({{{json app}}}, { id: '{{id}}', env: '{{env}}' })
+  </script>
+  <script src='/remote.js'></script>
+</body>
+</html>
