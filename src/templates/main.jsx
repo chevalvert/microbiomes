@@ -20,8 +20,7 @@ require('webpack-hot-middleware/client?reload=true')
   await new window.FontFace('Styrene', 'url(fonts/styrenea-regular.woff2)').load()
   render(<App />, document.body)
 
-  // TODO: connect to distant remote server (which won’t be the local server)
-  WebSocketServer.open()
+  WebSocketServer.open(window.ENV.remoteWebSocketServer)
 
   Scene.setup()
   Store.raf.frameCount.subscribe(Scene.update)
