@@ -1,8 +1,11 @@
-import randomOf from 'utils/array-random'
-
+import { randomOf } from 'controllers/Prng'
 import Creature from 'abstractions/Creature'
 
 export default class Shifter extends Creature {
+  get color () {
+    return '#f25700'
+  }
+
   constructor ({
     direction = randomOf([[-1, 0], [1, 0], [0, 1], [0, -1]]),
     ...params
@@ -20,15 +23,6 @@ export default class Shifter extends Creature {
 
   render () {
     super.render()
-
-    this.renderer.draw('creatures', ctx => {
-      ctx.save()
-      ctx.fillStyle = '#f25700'
-      ctx.lineWidth = ctx.canvas.resolution
-      ctx.translate(this.position[0], this.position[1])
-      ctx.fill(this.path)
-      ctx.restore()
-    })
 
     this.renderer.draw('trace', ctx => {
       ctx.save()

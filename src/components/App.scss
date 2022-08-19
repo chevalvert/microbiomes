@@ -19,4 +19,9 @@
       float: right;
     }
   }
+
+  .renderer canvas[data-name='debug'] {
+    position: fixed;
+    z-index: 3;
+  }
 }

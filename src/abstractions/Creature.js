@@ -1,7 +1,8 @@
 import Store from 'store'
-import { clamp, randomInt, radians, roundTo } from 'missing-math'
+import { wrap, randomInt, radians, roundTo } from 'missing-math'
 import path2d from 'utils/polygon-to-path2d'
 import polybool from 'poly-bool'
+import stringToColor from 'utils/string-to-color'
 
 export const SHAPES = {
   rectangle: function (radius, resolution = 1) {
@@ -22,7 +23,9 @@ export const SHAPES = {
         ? polybool(p, polygon, 'or')
         : p
     }
-    return path2d(polygon[0])
+    return polygon.length && polygon[0].length
+      ? path2d(polygon[0])
+      : SHAPES.rectangle(radius, resolution)
   },
 
   circle: function (radius, resolution = 1) {
@@ -52,12 +55,14 @@ export default class Creature {
       randomInt(bounds[1], bounds[1] + bounds[3])
     ]
   } = {}) {
+    this.timestamp = Date.now()
     this.size = size
     this.bounds = bounds
     this.position = position.map(v => Math.floor(v - size / 2))
     this.seed = position[0] + position[1] + Date.now()
 
     this.path = SHAPES[shape](this.radius, this.renderer.getContext('trace').canvas.resolution)
+    this.debugColor = stringToColor(this.constructor.name)
   }
 
   get radius () { return this.size / 2 }
@@ -75,22 +80,43 @@ export default class Creature {
     const xoff = Math.sin(angle * Math.PI * 2)
     const yoff = Math.cos(angle * Math.PI * 2)
 
-    this.position[0] = clamp(Math.round(this.position[0] + xoff), this.bounds[0] + this.radius, this.bounds[0] + this.bounds[2] - this.radius)
-    this.position[1] = clamp(Math.round(this.position[1] + yoff), this.bounds[1] + this.radius, this.bounds[1] + this.bounds[3] - this.radius)
+    this.position[0] = wrap(
+      Math.round(this.position[0] + xoff),
+      this.bounds[0] + this.radius,
+      this.bounds[0] + this.bounds[2] - this.radius
+    )
+
+    this.position[1] = wrap(
+      Math.round(this.position[1] + yoff),
+      this.bounds[1] + this.radius,
+      this.bounds[1] + this.bounds[3] - this.radius
+    )
   }
 
-  render () {
-    // Render bbox
-    this.renderer.debug(this.position, {
-      color: 'red',
-      dimensions: [this.size, this.size]
+  render ({ debug = false } = {}) {
+    this.renderer.draw('creatures', ctx => {
+      ctx.save()
+      ctx.fillStyle = this.color
+      ctx.lineWidth = ctx.canvas.resolution
+      ctx.translate(this.position[0], this.position[1])
+      ctx.fill(this.path)
+      ctx.restore()
     })
 
-    // Render path
-    this.renderer.debug(this.position, {
-      path: this.path,
-      text: this.constructor.name,
-      dimensions: [this.size, this.size]
-    })
+    if (debug) {
+      // Render bbox
+      this.renderer.debug(this.position, {
+        dimensions: [this.size, this.size]
+      })
+
+      // Render path
+      this.renderer.debug(this.position, {
+        color: this.debugColor,
+        text: this.constructor.name.toLowerCase(),
+        path: this.path,
+        lineWidth: 3,
+        dimensions: [this.size, this.size]
+      })
+    }
   }
 }

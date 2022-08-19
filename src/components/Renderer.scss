@@ -3,7 +3,7 @@
   height: 100vh;
 
   canvas {
-    @include inset;
+    @include inset(0, fixed);
     width: 100%;
     height: 100%;
   }
@@ -13,9 +13,5 @@
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-  }
-
-  &.has-debug-overlay canvas[data-name=debug] {
-    display: none;
   }
 }

@@ -4057,6 +4057,11 @@ fast-levenshtein@^2.0.6:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==
 
+fast-random@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/fast-random/-/fast-random-2.0.4.tgz#05b7ac4252938055d93becbaeb8e369373e34077"
+  integrity sha512-5F5065/D6wvzopZDePjT9C8EhDltwygBdW1AqDHIWPeP9flrxrAk89KYUDlS0V7IoALaRGPtc1pFEXqTyOa8tw==
+
 fastest-levenshtein@^1.0.12:
   version "1.0.12"
   resolved "https://registry.yarnpkg.com/fastest-levenshtein/-/fastest-levenshtein-1.0.12.tgz#9990f7d3a88cc5a9ffd1f1745745251700d497e2"
@@ -6159,10 +6164,10 @@ minizlib@^2.0.0, minizlib@^2.1.1:
     minipass "^3.0.0"
     yallist "^4.0.0"
 
-missing-math@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/missing-math/-/missing-math-3.2.0.tgz#815b381266b37888039b63a410d0b9ab7e03b16b"
-  integrity sha512-jRj1vP/jGwWG4X/XtSepBWVDyQJSk2ffk7jyy7L/fkzywemw877zbW/ne0NEQvg8Sl8ZNHvaeiuZ5qn/WKKQDw==
+missing-math@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/missing-math/-/missing-math-3.3.0.tgz#ce317a721a256c8240f94af8e170390d8b4152a3"
+  integrity sha512-AD655GV9Tj5+nmUhhBAAk8RiUvVjrHBaT8JBkWNmGlUHdRmqkxI4Nq2PJR/cvF5+dOtzPQTo0NO49euV0TPWgQ==
 
 mississippi@^3.0.0:
   version "3.0.0"

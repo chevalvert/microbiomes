@@ -7,6 +7,7 @@ import WebSocketServer from 'controllers/WebSocketServer'
 
 import Hotkey from 'controllers/Hotkey'
 import Population from 'controllers/Population'
+import Prng from 'controllers/Prng'
 import Raf from 'controllers/Raf'
 import Scene from 'controllers/Scene'
 
@@ -22,6 +23,8 @@ require('webpack-hot-middleware/client?reload=true')
 
   WebSocketServer.open(window.ENV.remoteWebSocketServer)
 
+  window.document.title += ' | ' + Prng.seed
+
   Scene.setup()
   Store.raf.frameCount.subscribe(Scene.update)
 
@@ -33,7 +36,7 @@ require('webpack-hot-middleware/client?reload=true')
 
 window.onresize = () => window.location.reload()
 
-Hotkey('w', () => Store.renderer.showDebugOverlay.update(state => !state))
+Hotkey('w', () => Store.renderer.debug.update(state => !state))
 Hotkey('p', () => Store.raf.isRunning.update(state => !state))
 
 /// #if DEVELOPMENT

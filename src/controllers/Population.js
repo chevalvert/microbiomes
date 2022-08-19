@@ -1,29 +1,39 @@
 import Store from 'store'
-import randomOf from 'utils/array-random'
+import { randomOf } from 'controllers/Prng'
 
-// import Builder from 'abstractions/Builder'
-import Shifter from 'abstractions/Shifter'
+import Creature from 'abstractions/Creature'
+import Builder from 'abstractions/creatures/Builder'
+import Restorer from 'abstractions/creatures/Restorer'
+import Shifter from 'abstractions/creatures/Shifter'
 
 const CREATURES = {
-  // Builder,
+  Builder,
+  Restorer,
   Shifter
 }
 
-export function add ({ type = 'Shifter', ...params } = {}) {
+// TODO: enable debug for the last one for a few seconds
+
+export function add ({ type, ...params } = {}) {
   const maxLength = Store.population.maxLength.get()
 
   Store.population.content.update(population => {
-    population.push(new CREATURES[type](params))
+    const creature = new (CREATURES[type] || Creature)(params)
+    population.push(creature)
     if (population.length > maxLength) population.shift()
   }, true)
 }
 
 export function randomize () {
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < Store.population.maxLength.get(); i++) {
     add({
-      shape: 'blob',
-      type: randomOf(Object.keys(CREATURES)),
-      size: 50
+      // shape: 'blob',
+      // type: randomOf([
+      //   'Builder',
+      //   'Restorer', 'Restorer', 'Restorer',
+      //   'Shifter', 'Shifter', 'Shifter'
+      // ]),
+      // size: randomOf([10, 100])
     })
   }
 }

@@ -20,17 +20,14 @@ export default class Renderer extends Component {
   beforeRender (props) {
     this.state = {
       contexts: new Map(),
+      cachedLayers: new Map(),
       noiseMap: new Noise() // TODO: seed
     }
   }
 
   template (props, state) {
     return (
-      <section
-        id='Renderer'
-        class='renderer'
-        store-class-has-debug-overlay={Store.renderer.showDebugOverlay}
-      >
+      <section id='Renderer' class='renderer'>
         {Object.entries(Store.renderer.layers.current).map(([name, { smooth }]) => (
           <canvas
             data-name={name}
@@ -74,6 +71,15 @@ export default class Renderer extends Component {
     })
   }
 
+  cache (layerName) {
+    const ctx = this.getContext(layerName)
+    const canvas = document.createElement('canvas')
+    canvas.width = ctx.canvas.width
+    canvas.height = ctx.canvas.height
+    canvas.getContext('2d').drawImage(ctx.canvas, 0, 0)
+    this.state.cachedLayers.set(layerName, canvas)
+  }
+
   getContext (layerName) {
     return this.state.contexts.get(layerName)
   }
@@ -99,12 +105,14 @@ export default class Renderer extends Component {
 
   debug (position, {
     text = null,
-    dimensions = [1, 1],
-    color = 'cyan',
+    dimensions = [10, 10],
+    color = 'black',
+    lineWidth = null,
     path
   } = {}) {
     this.draw('debug', ctx => {
       ctx.strokeStyle = color
+      ctx.lineWidth = lineWidth || ctx.canvas.resolution
 
       if (path) {
         ctx.save()
@@ -116,10 +124,19 @@ export default class Renderer extends Component {
       }
 
       if (text) {
-        ctx.fillStyle = color
-        ctx.lineWidth = 3
-        ctx.font = '20px Styrene'
-        ctx.fillText(text, position[0] - this.#measureText(text) / 2, position[1])
+        const padding = 5
+        const fontSize = 12
+        ctx.font = `${fontSize}px Styrene`
+
+        const width = this.#measureText(text)
+        const x = position[0] - dimensions[0] / 2 + padding - (ctx.lineWidth / 2)
+        const y = position[1] - dimensions[1] / 2 - fontSize - padding
+
+        ctx.fillStyle = 'black'
+        ctx.fillRect(x - padding, y - padding, width + padding * 2, fontSize + padding * 2)
+
+        ctx.fillStyle = 'white'
+        ctx.fillText(text, x, y + fontSize - padding / 2)
       }
     })
   }
