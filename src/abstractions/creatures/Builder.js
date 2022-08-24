@@ -6,8 +6,8 @@ export default class Builder extends Creature {
     return 'yellow'
   }
 
-  render () {
-    super.render()
+  render (...args) {
+    super.render(...args)
 
     this.renderer.draw('trace', ctx => {
       const colors = Store.scene.palette.get()
@@ -15,19 +15,20 @@ export default class Builder extends Creature {
 
       const u = ctx.canvas.resolution
       ctx.save()
-      ctx.translate(this.position[0], this.position[1])
+      ctx.translate(this.center[0], this.center[1])
       ctx.clip(this.path)
-      for (let i = 0; i < this.size; i += u) {
-        for (let j = 0; j < this.size; j += u) {
-          const x = i - Math.round(this.size / 2)
-          const y = j - Math.round(this.size / 2)
+      // TODO: improve perf by using points-in-polygon instead of clipping
+      for (let i = 0; i < this.size / u; i++) {
+        for (let j = 0; j < this.size / u; j++) {
           ctx.fillStyle = pattern({
-            // Adding this.position because the translation is not applied here
-            x: x + this.position[0],
-            y: y + this.position[1],
-            u,
-            colors
+            i: i + Math.round(this.center[0] / u) - Math.round(this.radius / u),
+            j: j + Math.round(this.center[1] / u) - Math.round(this.radius / u),
+            colors,
+            ctx
           })
+
+          const x = (i * u) - this.radius
+          const y = (j * u) - this.radius
           ctx.fillRect(x, y, u, u)
         }
       }

@@ -2,7 +2,7 @@ import Store from 'store'
 import classnames from 'classnames'
 import { Noise } from 'noisejs'
 import { Component } from 'utils/jsx'
-import { roundTo } from 'missing-math'
+import { ceilTo, floorTo, roundTo } from 'missing-math'
 import noop from 'utils/noop'
 
 const CACHE = new Map()
@@ -52,7 +52,9 @@ export default class Renderer extends Component {
       context = context || canvas.getContext('2d')
       context.imageSmoothingEnabled = smooth
       context.scale(resolution, resolution)
-      context.round = v => isNaN(v) ? v : roundTo(v, 1 / resolution)
+      context.ceil = v => context.NO_ROUND ? v : isNaN(v) ? v : ceilTo(v, 1 / resolution)
+      context.floor = v => context.NO_ROUND ? v : isNaN(v) ? v : floorTo(v, 1 / resolution)
+      context.round = v => context.NO_ROUND ? v : isNaN(v) ? v : roundTo(v, 1 / resolution)
 
       if (round) {
         for (const method of ROUNDABLE_METHODS) {
@@ -120,7 +122,7 @@ export default class Renderer extends Component {
         ctx.stroke(path)
         ctx.restore()
       } else {
-        ctx.strokeRect(position[0] - dimensions[0] / 2, position[1] - dimensions[1] / 2, dimensions[0], dimensions[1])
+        ctx.strokeRect(position[0], position[1], dimensions[0], dimensions[1])
       }
 
       if (text) {
@@ -129,8 +131,8 @@ export default class Renderer extends Component {
         ctx.font = `${fontSize}px Styrene`
 
         const width = this.#measureText(text)
-        const x = position[0] - dimensions[0] / 2 + padding - (ctx.lineWidth / 2)
-        const y = position[1] - dimensions[1] / 2 - fontSize - padding
+        const x = position[0] + padding - (ctx.lineWidth / 2)
+        const y = position[1] - fontSize - padding
 
         ctx.fillStyle = 'black'
         ctx.fillRect(x - padding, y - padding, width + padding * 2, fontSize + padding * 2)

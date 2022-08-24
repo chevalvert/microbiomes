@@ -21,17 +21,17 @@ export default class Shifter extends Creature {
     }
   }
 
-  render () {
-    super.render()
+  render (...args) {
+    super.render(...args)
 
     this.renderer.draw('trace', ctx => {
       ctx.save()
-      ctx.translate(this.position[0], this.position[1])
+      ctx.translate(this.center[0], this.center[1])
       ctx.clip(this.path)
       ctx.drawImage(
         ctx.canvas,
-        this.center[0] / ctx.canvas.resolution,
-        this.center[1] / ctx.canvas.resolution,
+        this.position[0] / ctx.canvas.resolution,
+        this.position[1] / ctx.canvas.resolution,
         this.size / ctx.canvas.resolution,
         this.size / ctx.canvas.resolution,
         this.direction[0] - this.size / 2 + ctx.canvas.resolution,

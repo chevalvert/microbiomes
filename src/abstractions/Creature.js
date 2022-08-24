@@ -1,52 +1,15 @@
 import Store from 'store'
-import { wrap, randomInt, radians, roundTo } from 'missing-math'
-import path2d from 'utils/polygon-to-path2d'
-import polybool from 'poly-bool'
+import { wrap, randomInt } from 'missing-math'
+import Polygon from 'abstractions/Polygon'
 import stringToColor from 'utils/string-to-color'
-
-export const SHAPES = {
-  rectangle: function (radius, resolution = 1) {
-    const r = roundTo(radius, resolution)
-    return path2d([[-r, -r], [-r, r], [r, r], [r, -r]])
-  },
-
-  blob: function (radius, resolution = 1) {
-    let polygon
-    for (let i = 0; i < 5; i++) {
-      const x = roundTo(randomInt(-radius, 0), resolution)
-      const y = roundTo(randomInt(-radius, 0), resolution)
-      const w = roundTo(randomInt(radius - x), resolution)
-      const h = roundTo(randomInt(radius - y), resolution)
-
-      const p = [[[x, y], [x + w, y], [x + w, y + h], [x, y + h]]]
-      polygon = polygon
-        ? polybool(p, polygon, 'or')
-        : p
-    }
-    return polygon.length && polygon[0].length
-      ? path2d(polygon[0])
-      : SHAPES.rectangle(radius, resolution)
-  },
-
-  circle: function (radius, resolution = 1) {
-    let polygon
-    for (let a = 0; a < 360; a += 360 / 16) {
-      const w = roundTo(Math.cos(radians(a)) * radius, resolution)
-      const h = roundTo(Math.sin(radians(a)) * radius, resolution)
-      const p = [[[0, 0], [w, 0], [w, h], [0, h]]]
-      polygon = polygon
-        ? polybool(p, polygon, 'or')
-        : p
-    }
-
-    return path2d(polygon[0])
-  }
-}
+import { randomOf } from 'controllers/Prng'
 
 export default class Creature {
   get renderer () { return Store.renderer.instance.current }
 
   constructor ({
+    animated = false,
+    speed = 1,
     shape = 'rectangle',
     size = 10,
     bounds = [0, 0, window.innerWidth, window.innerHeight],
@@ -55,42 +18,63 @@ export default class Creature {
       randomInt(bounds[1], bounds[1] + bounds[3])
     ]
   } = {}) {
+    this.speed = speed
     this.timestamp = Date.now()
+    this.animated = animated
     this.size = size
     this.bounds = bounds
     this.position = position.map(v => Math.floor(v - size / 2))
+    this.ppos = this.position
+
     this.seed = position[0] + position[1] + Date.now()
 
-    this.path = SHAPES[shape](this.radius, this.renderer.getContext('trace').canvas.resolution)
+    const resolution = this.renderer.getContext('trace').canvas.resolution
+    this.polygon = Polygon.shape(shape, { size, resolution })
+    this.sprite = Polygon.tamagotchize(this.polygon, {
+      resolution,
+      direction: randomOf(['horizontal', 'vertical']),
+      framesLength: 10,
+      amt: 0.1
+    })
+
     this.debugColor = stringToColor(this.constructor.name)
   }
 
+  get path () {
+    const index = Math.round((Store.raf.frameCount.current + this.seed) / 5) % this.sprite.length
+    return this.sprite[index]
+  }
+
   get radius () { return this.size / 2 }
-  get center () {
-    return [
-      this.position[0] - this.radius,
-      this.position[1] - this.radius
-    ]
+  get center () { return [this.position[0] + this.radius, this.position[1] + this.radius] }
+  get orientation () {
+    const dx = Math.abs(this.position[0] - this.ppos[0])
+    const dy = Math.abs(this.position[1] - this.ppos[1])
+    return dx > dy ? 'horizontal' : 'vertical'
   }
 
   // TODO: implement multiple behaviors
-  update () {
-    // TODOBUG: all tends to go in the same direction
-    const angle = this.renderer.noise(this.seed, null, { octaves: 6 })
-    const xoff = Math.sin(angle * Math.PI * 2)
-    const yoff = Math.cos(angle * Math.PI * 2)
+  update ({
+    speed = this.speed,
+    octaves = 4 + (this.seed % 4)
+  } = {}) {
+    this.ppos = [...this.position]
+
+    const angle = this.renderer.noise(this.seed, null, { octaves })
+    const xoff = Math.sin(angle * Math.PI * 2) * speed
+    const yoff = Math.cos(angle * Math.PI * 2) * speed
 
     this.position[0] = wrap(
-      Math.round(this.position[0] + xoff),
-      this.bounds[0] + this.radius,
-      this.bounds[0] + this.bounds[2] - this.radius
-    )
+      this.center[0] + xoff,
+      this.bounds[0],
+      this.bounds[0] + this.bounds[2]
+    ) - this.radius
 
     this.position[1] = wrap(
-      Math.round(this.position[1] + yoff),
-      this.bounds[1] + this.radius,
-      this.bounds[1] + this.bounds[3] - this.radius
-    )
+      this.center[1] + yoff,
+      this.bounds[1],
+      this.bounds[1] + this.bounds[3]
+    ) - this.radius
   }
 
   render ({ debug = false } = {}) {
@@ -98,7 +82,7 @@ export default class Creature {
       ctx.save()
       ctx.fillStyle = this.color
       ctx.lineWidth = ctx.canvas.resolution
-      ctx.translate(this.position[0], this.position[1])
+      ctx.translate(this.center[0], this.center[1])
       ctx.fill(this.path)
       ctx.restore()
     })
@@ -106,13 +90,13 @@ export default class Creature {
     if (debug) {
       // Render bbox
       this.renderer.debug(this.position, {
+        text: this.constructor.name.toLowerCase(),
         dimensions: [this.size, this.size]
       })
 
       // Render path
-      this.renderer.debug(this.position, {
+      this.renderer.debug(this.center, {
         color: this.debugColor,
-        text: this.constructor.name.toLowerCase(),
         path: this.path,
         lineWidth: 3,
         dimensions: [this.size, this.size]

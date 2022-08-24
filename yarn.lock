@@ -6164,10 +6164,10 @@ minizlib@^2.0.0, minizlib@^2.1.1:
     minipass "^3.0.0"
     yallist "^4.0.0"
 
-missing-math@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/missing-math/-/missing-math-3.3.0.tgz#ce317a721a256c8240f94af8e170390d8b4152a3"
-  integrity sha512-AD655GV9Tj5+nmUhhBAAk8RiUvVjrHBaT8JBkWNmGlUHdRmqkxI4Nq2PJR/cvF5+dOtzPQTo0NO49euV0TPWgQ==
+missing-math@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/missing-math/-/missing-math-3.4.0.tgz#ea4b2d829fc06d9390edc41f39df7b18571235ee"
+  integrity sha512-3lb2zkR+vQ9BV1TaSUK+tu3oOMX7wcgAC1t3FdYQKcJYHdjRJsfdsG8ZPgyaAxjKwGP5qc8R+vaiWsH5+L/nbg==
 
 mississippi@^3.0.0:
   version "3.0.0"
@@ -6945,6 +6945,11 @@ pkg-dir@^4.1.0, pkg-dir@^4.2.0:
   integrity sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==
   dependencies:
     find-up "^4.0.0"
+
+point-in-polygon@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/point-in-polygon/-/point-in-polygon-1.1.0.tgz#b0af2616c01bdee341cbf2894df643387ca03357"
+  integrity sha512-3ojrFwjnnw8Q9242TzgXuTD+eKiutbzyslcq1ydfu82Db2y+Ogbmyrkpv0Hgj31qwT3lbS9+QAAO/pIQM35XRw==
 
 poly-bool@^1.0.0:
   version "1.0.0"

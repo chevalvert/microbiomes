@@ -27,13 +27,15 @@ export function add ({ type, ...params } = {}) {
 export function randomize () {
   for (let i = 0; i < Store.population.maxLength.get(); i++) {
     add({
-      // shape: 'blob',
-      // type: randomOf([
-      //   'Builder',
-      //   'Restorer', 'Restorer', 'Restorer',
-      //   'Shifter', 'Shifter', 'Shifter'
-      // ]),
-      // size: randomOf([10, 100])
+      shape: 'blob',
+      animated: true,
+      type: randomOf(Store.population.initialDistribution.get()),
+      size: randomOf([
+        25, 25,
+        50, 50, 50, 50,
+        100, 100,
+        200
+      ])
     })
   }
 }

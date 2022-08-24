@@ -2,6 +2,8 @@
   @include no-select;
 
   h1 {
+    opacity: 0; // DEBUG
+
     color: white;
     position: fixed;
     z-index: 2;

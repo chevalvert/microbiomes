@@ -10,25 +10,28 @@ export default class Restorer extends Creature {
     this.cache = this.renderer.state.cachedLayers.get('trace')
   }
 
-  render () {
-    super.render()
+  render (...args) {
+    super.render(...args)
 
     this.renderer.draw('trace', ctx => {
       ctx.save()
-      ctx.translate(this.position[0], this.position[1])
+      ctx.translate(this.center[0], this.center[1])
       ctx.clip(this.path)
 
+      ctx.NO_ROUND = true
       ctx.drawImage(
         this.cache,
-        this.center[0] / ctx.canvas.resolution,
-        this.center[1] / ctx.canvas.resolution,
+        this.position[0] / ctx.canvas.resolution,
+        this.position[1] / ctx.canvas.resolution,
         this.size / ctx.canvas.resolution,
         this.size / ctx.canvas.resolution,
-        ctx.canvas.resolution - this.size / 2,
-        ctx.canvas.resolution - this.size / 2,
-        this.size,
-        this.size
+        Math.floor(-this.radius),
+        Math.floor(-this.radius),
+        Math.ceil(this.size),
+        Math.ceil(this.size)
       )
+      ctx.NO_ROUND = false
+
       ctx.restore()
     })
   }
