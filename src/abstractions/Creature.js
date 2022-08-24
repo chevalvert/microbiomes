@@ -9,7 +9,7 @@ export default class Creature {
 
   constructor ({
     animated = false,
-    speed = 1,
+    speed = randomInt(1, 3),
     shape = 'rectangle',
     size = 10,
     bounds = [0, 0, window.innerWidth, window.innerHeight],
@@ -33,6 +33,7 @@ export default class Creature {
     this.sprite = Polygon.tamagotchize(this.polygon, {
       resolution,
       direction: randomOf(['horizontal', 'vertical']),
+      slicesLength: randomOf([2, 3, 4]),
       framesLength: 10,
       amt: 0.1
     })
@@ -53,7 +54,6 @@ export default class Creature {
     return dx > dy ? 'horizontal' : 'vertical'
   }
 
-  // TODO: implement multiple behaviors
   update ({
     speed = this.speed,
     octaves = 4 + (this.seed % 4)

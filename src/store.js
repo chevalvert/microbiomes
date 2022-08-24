@@ -10,7 +10,7 @@ const Store = {
 
     layers: readable({
       trace: {
-        resolution: 1 / 3,
+        resolution: 1 / window.ENV.renderer.scale,
         smooth: false,
         round: true,
         clear: false,
@@ -20,7 +20,7 @@ const Store = {
         }
       },
       creatures: {
-        resolution: 1 / 3,
+        resolution: 1 / window.ENV.renderer.scale,
         smooth: false,
         round: true,
         clear: true,
@@ -41,21 +41,19 @@ const Store = {
 
   // Public store for the Scene controller
   scene: {
-    padding: readable(30),
+    padding: readable(window.ENV.scene.padding),
     palette: readable(
       randomOf([
+        ...window.ENV.scene.palettes
         // ['white', 'black'],
         // ['#8c7b43', '#e2e2e5', '#c5cfcb', '#b3cbcd', '#b4bcba', '#97bfca', '#9aa2a5', '#777d80', '#565a5b'],
         // ['white', '#AAA', '#666', '#EEE', 'black'],
         // ['#fe0500', '#ff7c3b', '#ffe1b3', '#fde4f9', '#f28cfe', '#c656ff', '#a23df4', '#2314fd'],
-        ['#5181c9', '#49b094', '#5da3d3', '#2b6c4b', '#b79497', '#5b8cde']
       ])
     ),
     pattern: readable(randomOf([
       randomOf([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) + '-',
-      'R-',
-      'R-RT',
-      '11-22T--3344---55--'
+      ...window.ENV.scene.patterns
     ].map(string => ({ i, j, ctx, colors }) => {
       // Interpret the pattern string as a looping array of color indexes
       const cols = ctx.canvas.width + (ctx.canvas.width % 2 === 0 ? 1 : 0)
@@ -77,18 +75,15 @@ const Store = {
 
   // Public store for the Population controller
   population: {
-    maxLength: readable(20),
-    initialDistribution: readable([
-      'Builder',
-      'Restorer', 'Restorer', 'Restorer',
-      'Shifter', 'Shifter', 'Shifter', 'Shifter', 'Shifter', 'Shifter'
-    ]),
+    maxLength: readable(window.ENV.population.maxLength),
+    initialTypeDistribution: readable(window.ENV.population.initialTypeDistribution),
+    initialSizeDistribution: readable(window.ENV.population.initialSizeDistribution),
     content: writable([])
   },
 
   // Public store for the RAF controller
   raf: {
-    fps: readable(30),
+    fps: readable(window.ENV.renderer.fps || 60),
     isRunning: writable(true),
     frameCount: writable(0)
   }

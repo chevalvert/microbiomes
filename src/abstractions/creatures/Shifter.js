@@ -34,8 +34,8 @@ export default class Shifter extends Creature {
         this.position[1] / ctx.canvas.resolution,
         this.size / ctx.canvas.resolution,
         this.size / ctx.canvas.resolution,
-        this.direction[0] - this.size / 2 + ctx.canvas.resolution,
-        this.direction[1] - this.size / 2 + ctx.canvas.resolution,
+        this.direction[0] - this.radius,
+        this.direction[1] - this.radius,
         this.size,
         this.size
       )

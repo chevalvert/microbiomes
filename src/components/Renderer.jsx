@@ -21,7 +21,7 @@ export default class Renderer extends Component {
     this.state = {
       contexts: new Map(),
       cachedLayers: new Map(),
-      noiseMap: new Noise() // TODO: seed
+      noiseMap: new Noise()
     }
   }
 

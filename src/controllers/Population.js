@@ -12,8 +12,6 @@ const CREATURES = {
   Shifter
 }
 
-// TODO: enable debug for the last one for a few seconds
-
 export function add ({ type, ...params } = {}) {
   const maxLength = Store.population.maxLength.get()
 
@@ -29,13 +27,8 @@ export function randomize () {
     add({
       shape: 'blob',
       animated: true,
-      type: randomOf(Store.population.initialDistribution.get()),
-      size: randomOf([
-        25, 25,
-        50, 50, 50, 50,
-        100, 100,
-        200
-      ])
+      type: randomOf(Store.population.initialTypeDistribution.get()),
+      size: randomOf(Store.population.initialSizeDistribution.get())
     })
   }
 }
