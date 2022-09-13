@@ -3,13 +3,13 @@ import { render } from 'utils/jsx'
 import DOMReady from 'utils/dom-is-ready'
 
 import App from 'components/App'
-import WebSocketServer from 'controllers/WebSocketServer'
 
 import Hotkey from 'controllers/Hotkey'
 import Population from 'controllers/Population'
 import Prng from 'controllers/Prng'
 import Raf from 'controllers/Raf'
 import Scene from 'controllers/Scene'
+import WebSocketServer from 'controllers/WebSocketServer'
 
 /// #if DEVELOPMENT
 require('webpack-hot-middleware/client?reload=true')
@@ -18,7 +18,7 @@ require('webpack-hot-middleware/client?reload=true')
 
 ;(async () => {
   await DOMReady()
-  await new window.FontFace('Styrene', 'url(fonts/styrenea-regular.woff2)').load()
+  await new window.FontFace('Styrene', 'url(/fonts/styrenea-regular.woff2)').load()
   render(<App />, document.body)
 
   WebSocketServer.open(window.ENV.remoteWebSocketServer)

@@ -7,7 +7,7 @@ export default class Restorer extends Creature {
 
   constructor (params) {
     super(params)
-    this.cache = this.renderer.state.cachedLayers.get('trace')
+    this.cache = this.renderer && this.renderer.state.cachedLayers.get('trace')
   }
 
   render (...args) {

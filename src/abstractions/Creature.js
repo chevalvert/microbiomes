@@ -5,18 +5,21 @@ import stringToColor from 'utils/string-to-color'
 import { randomOf } from 'controllers/Prng'
 
 export default class Creature {
-  get renderer () { return Store.renderer.instance.current }
+  get renderer () { return Store.renderer.instance ? Store.renderer.instance.current : null }
 
   constructor ({
     animated = false,
-    speed = randomInt(1, 3),
+    speed = randomInt(1, 4),
     shape = 'rectangle',
     size = 10,
     bounds = [0, 0, window.innerWidth, window.innerHeight],
     position = [
       randomInt(bounds[0], bounds[0] + bounds[2]),
       randomInt(bounds[1], bounds[1] + bounds[3])
-    ]
+    ],
+    resolution = this.renderer
+      ? this.renderer.getContext('trace').canvas.resolution
+      : 1
   } = {}) {
     this.speed = speed
     this.timestamp = Date.now()
@@ -28,7 +31,6 @@ export default class Creature {
 
     this.seed = position[0] + position[1] + Date.now()
 
-    const resolution = this.renderer.getContext('trace').canvas.resolution
     this.polygon = Polygon.shape(shape, { size, resolution })
     this.sprite = Polygon.tamagotchize(this.polygon, {
       resolution,
@@ -101,6 +103,16 @@ export default class Creature {
         lineWidth: 3,
         dimensions: [this.size, this.size]
       })
+    }
+  }
+
+  toJSON () {
+    // WIP
+    return {
+      type: this.constructor.name,
+      speed: this.speed,
+      size: this.size,
+      sprite: this.sprite
     }
   }
 }

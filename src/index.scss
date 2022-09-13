@@ -7,13 +7,14 @@
 
 :root {
   // --theme: defined in app.json
+  --accent: #5181c9;
   --background: var(--theme);
 
   --font-family: 'Styrene';
   --font-size: 1.8rem;
   --line-height: 1.4;
 
-  --gutter: 2rem;
+  --gutter: 3rem;
 }
 
 @include html-no-scroll;
@@ -21,23 +22,7 @@
 @import 'style/base';
 
 @import 'components/App';
+@import 'components/Button';
+@import 'components/Remote';
 @import 'components/Renderer';
-
-body[data-template='remote'] {
-  @include no-select;
-  padding: var(--gutter);
-  display: flex;
-  gap: var(--gutter);
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-
-  @include portrait {
-    flex-direction: column;
-  }
-
-  button {
-    cursor: pointer;
-    padding: var(--gutter);
-  }
-}
+@import 'components/Select';

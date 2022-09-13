@@ -12,11 +12,23 @@ const CREATURES = {
   Shifter
 }
 
-export function add ({ type, ...params } = {}) {
+export function create ({ type, ...params } = {}) {
+  return new (CREATURES[type] || Creature)(params)
+}
+
+export function createRandomCreature (distribution = Store.population.initialTypeDistribution.get()) {
+  return create({
+    shape: 'blob',
+    animated: true,
+    type: randomOf(distribution),
+    size: randomOf(Store.population.initialSizeDistribution.get())
+  })
+}
+
+export function add (creature) {
   const maxLength = Store.population.maxLength.get()
 
   Store.population.content.update(population => {
-    const creature = new (CREATURES[type] || Creature)(params)
     population.push(creature)
     if (population.length > maxLength) population.shift()
   }, true)
@@ -24,13 +36,9 @@ export function add ({ type, ...params } = {}) {
 
 export function randomize () {
   for (let i = 0; i < Store.population.maxLength.get(); i++) {
-    add({
-      shape: 'blob',
-      animated: true,
-      type: randomOf(Store.population.initialTypeDistribution.get()),
-      size: randomOf(Store.population.initialSizeDistribution.get())
-    })
+    const creature = createRandomCreature()
+    add(creature)
   }
 }
 
-export default { add, randomize }
+export default { add, create, createRandomCreature, randomize }
