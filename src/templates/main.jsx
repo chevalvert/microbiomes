@@ -33,6 +33,11 @@ require('webpack-hot-middleware/client?reload=true')
   WebSocketServer.content.subscribe(data => data.id === window.ENV.id && Population.add(data.creature))
 
   Raf.start()
+
+  if (window.ENV.refreshAfterMs) {
+    console.log(`Refreshing in ${window.ENV.refreshAfterMs}ms…`)
+    window.setTimeout(() => window.location.reload(), window.ENV.refreshAfterMs)
+  }
 })()
 
 window.onresize = () => window.location.reload()
