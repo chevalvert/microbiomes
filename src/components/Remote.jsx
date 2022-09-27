@@ -15,12 +15,13 @@ export default class Remote extends Component {
   beforeRender () {
     this.handleGenerate = this.handleGenerate.bind(this)
     this.handleTick = this.handleTick.bind(this)
-    this.handleSelect = this.handleSelect.bind(this)
     this.handleSend = this.handleSend.bind(this)
 
     this.state = {
       steps: readable(Math.ceil(Math.max(...window.ENV.population.initialSizeDistribution))),
       context: writable(undefined),
+
+      currentScreen: writable((+window.ENV.id || 1).toString()),
 
       creature: writable(undefined),
       creatureType: writable('Creature'),
@@ -64,12 +65,12 @@ export default class Remote extends Component {
           <div class='flexgroup'>
             <Select
               // TODO: dynamic
-              event-change={this.handleSelect}
+              store-value={state.currentScreen}
               // TODO: handle change
               options={[
-                { value: 1, label: 'screen #1' },
-                { value: 2, label: 'screen #2' },
-                { value: 3, label: 'screen #3' }
+                { value: 1, label: 'screen #1', selected: window.ENV.id === '1' },
+                { value: 2, label: 'screen #2', selected: window.ENV.id === '2' },
+                { value: 3, label: 'screen #3', selected: window.ENV.id === '3' }
               ]}
             />
             <Button
@@ -121,18 +122,10 @@ export default class Remote extends Component {
     this.refs.context.restore()
   }
 
-  handleSelect () {
-    this.log('TODO')
-  }
-
   handleSend () {
-    // TODO
     WebSocketServer.sendJson({
-      id: window.ENV.id,
-      creature: {
-        shape: 'blob',
-        size: 100
-      }
+      id: this.state.currentScreen.current,
+      creature: this.state.creature.current.toJSON()
     })
   }
 

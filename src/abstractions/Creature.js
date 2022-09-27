@@ -12,6 +12,7 @@ export default class Creature {
     speed = randomInt(1, 4),
     shape = 'rectangle',
     size = 10,
+    sprite = null,
     bounds = [0, 0, window.innerWidth, window.innerHeight],
     position = [
       randomInt(bounds[0], bounds[0] + bounds[2]),
@@ -31,14 +32,18 @@ export default class Creature {
 
     this.seed = position[0] + position[1] + Date.now()
 
-    this.polygon = Polygon.shape(shape, { size, resolution })
-    this.sprite = Polygon.tamagotchize(this.polygon, {
-      resolution,
-      direction: randomOf(['horizontal', 'vertical']),
-      slicesLength: randomOf([2, 3, 4]),
-      framesLength: 10,
-      amt: 0.1
-    })
+    if (sprite) {
+      this.sprite = sprite.map(polygon => Polygon.toPath2d(polygon, resolution))
+    } else {
+      const polygon = Polygon.shape(shape, { size, resolution })
+      this.sprite = Polygon.tamagotchize(polygon, {
+        resolution,
+        direction: randomOf(['horizontal', 'vertical']),
+        slicesLength: randomOf([2, 3, 4]),
+        framesLength: 10,
+        amt: 0.1
+      })
+    }
 
     this.debugColor = stringToColor(this.constructor.name)
   }
@@ -107,12 +112,11 @@ export default class Creature {
   }
 
   toJSON () {
-    // WIP
     return {
       type: this.constructor.name,
       speed: this.speed,
       size: this.size,
-      sprite: this.sprite
+      sprite: this.sprite.map(path => path.toString())
     }
   }
 }

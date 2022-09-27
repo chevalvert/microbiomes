@@ -113,13 +113,19 @@ export function tamagotchize (polygon, {
     frames.push(union(slices))
   }
 
-  return frames.map(frame => {
-    return path2d(frame.map(p => p.map(v => roundTo(v, resolution))))
-  })
+  return frames.map(frame => toPath2d(frame, resolution))
+}
+
+export function toPath2d (polygon, resolution = 1) {
+  const polygons = polygon.map(p => p.map(v => roundTo(v, resolution)))
+  // Handle conversion to JSON, which is unsupported by default
+  const path = path2d(polygons)
+  path.toString = () => polygons
+  return path
 }
 
 export function shape (shape = 'rectangle', { size = 10, resolution } = {}) {
   return SHAPES[shape](size / 2, resolution)
 }
 
-export default { shape, tamagotchize }
+export default { shape, tamagotchize, toPath2d }

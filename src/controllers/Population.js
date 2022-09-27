@@ -26,6 +26,9 @@ export function createRandomCreature (distribution = Store.population.initialTyp
 }
 
 export function add (creature) {
+  // Interpret non-creature inputs as creature parameters (used by ws)
+  if (!(creature instanceof Creature)) creature = create(creature)
+
   const maxLength = Store.population.maxLength.get()
 
   Store.population.content.update(population => {

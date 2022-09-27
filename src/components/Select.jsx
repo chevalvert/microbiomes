@@ -1,5 +1,6 @@
 import { readable, writable } from 'utils/state'
 import { Component } from 'utils/jsx'
+import noop from 'utils/noop'
 import cuid from 'cuid'
 
 export default class StepSelect extends Component {
@@ -37,7 +38,7 @@ export default class StepSelect extends Component {
   }
 
   handleChange (e) {
-    const value = e.target.value
-    this.state.value.set(isNaN(value) ? value : +value)
+    this.state.value.set(e.target.value)
+    ;(this.props['event-change'] || noop)(e)
   }
 }
