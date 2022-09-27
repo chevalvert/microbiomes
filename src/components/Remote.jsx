@@ -31,7 +31,7 @@ export default class Remote extends Component {
 
   template (props, state) {
     return (
-      <main id='Remote' class='remote'>
+      <main id='Remote' class='remote' store-data-creature={state.creatureType}>
         <header>
           <h1>
             <span>generative</span>

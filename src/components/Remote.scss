@@ -31,6 +31,10 @@
   flex-direction: column;
   gap: calc(var(--gutter) / 2);
 
+  &[data-creature=Shifter] { --accent: #f25700; }
+  &[data-creature=Restorer] { --accent: #5181c9; }
+  &[data-creature=Builder] { --accent: #54d584; }
+
   header {
     position: sticky;
     top: 0;
