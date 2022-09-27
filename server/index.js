@@ -90,6 +90,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Serve static files
+app.use(express.static(path.join(__dirname, '..', 'build')))
 app.use(express.static(path.join(__dirname, '..', 'static')))
 
 // Setup API routes
