@@ -1,6 +1,6 @@
 import Store from 'store'
 import { Component } from 'utils/jsx'
-import { derived, readable, writable } from 'utils/state'
+import { derived, readable } from 'utils/state'
 
 import Renderer from 'components/Renderer'
 
@@ -8,10 +8,10 @@ export default class App extends Component {
   beforeRender () {
     this.state = {
       screenId: readable(window.ENV.id),
+      remainingTicks: derived(Store.raf.frameCount, frameCount => Math.max(0, window.ENV.ticksBeforeRefresh - frameCount)),
       buildersLength: derived(Store.population.content, creatures => creatures.filter(c => c.constructor.name === 'Builder').length),
       restorersLength: derived(Store.population.content, creatures => creatures.filter(c => c.constructor.name === 'Restorer').length),
-      shiftersLength: derived(Store.population.content, creatures => creatures.filter(c => c.constructor.name === 'Shifter').length),
-
+      shiftersLength: derived(Store.population.content, creatures => creatures.filter(c => c.constructor.name === 'Shifter').length)
     }
   }
 
@@ -27,7 +27,9 @@ export default class App extends Component {
         <section class='app__stats'>
           <div class='flexgroup'>
             <span data-label='screen' store-text={state.screenId} />
-            <span data-label='ticks' store-text={Store.raf.frameCount} />
+            {window.ENV.ticksBeforeRefresh && (
+              <span data-label='remaining ticks' store-text={state.remainingTicks} />
+            )}
           </div>
           <span data-label='builders' store-text={state.buildersLength} />
           <span data-label='restorers' store-text={state.restorersLength} />

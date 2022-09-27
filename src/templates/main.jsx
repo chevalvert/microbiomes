@@ -34,9 +34,12 @@ require('webpack-hot-middleware/client?reload=true')
 
   Raf.start()
 
-  if (window.ENV.refreshAfterMs) {
-    console.log(`Refreshing in ${window.ENV.refreshAfterMs}ms…`)
-    window.setTimeout(() => window.location.reload(), window.ENV.refreshAfterMs)
+  if (window.ENV.ticksBeforeRefresh) {
+    console.log(`Refreshing in ${window.ENV.ticksBeforeRefresh} ticks !`)
+    Store.raf.frameCount.subscribe(frameCount => {
+      if (frameCount < window.ENV.ticksBeforeRefresh) return
+      window.location.reload()
+    })
   }
 })()
 
