@@ -12,6 +12,7 @@
   },
 
   "scene": {
+    "invert": true,
     "padding": 30,
     "patterns": [
       "R-",
