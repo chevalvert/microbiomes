@@ -17,6 +17,7 @@ body {
   font-family: var(--font-family);
   font-size: var(--font-size);
   line-height: var(--line-height);
+  font-variant-numeric: tabular-nums;
 
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

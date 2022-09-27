@@ -1,11 +1,21 @@
 import Store from 'store'
 import { Component } from 'utils/jsx'
-import { readable } from 'utils/state'
+import { derived, readable, writable } from 'utils/state'
 
 import Renderer from 'components/Renderer'
 
 export default class App extends Component {
-  template () {
+  beforeRender () {
+    this.state = {
+      screenId: readable(window.ENV.id),
+      buildersLength: derived(Store.population.content, creatures => creatures.filter(c => c.constructor.name === 'Builder').length),
+      restorersLength: derived(Store.population.content, creatures => creatures.filter(c => c.constructor.name === 'Restorer').length),
+      shiftersLength: derived(Store.population.content, creatures => creatures.filter(c => c.constructor.name === 'Shifter').length),
+
+    }
+  }
+
+  template (props, state) {
     return (
       <main id='App' class='app'>
         <Renderer ref={this.ref('renderer')} />
@@ -14,6 +24,15 @@ export default class App extends Component {
           <div>graphic</div>
           <div>drift</div>
         </h1>
+        <section class='app__stats'>
+          <div class='flexgroup'>
+            <span data-label='screen' store-text={state.screenId} />
+            <span data-label='ticks' store-text={Store.raf.frameCount} />
+          </div>
+          <span data-label='builders' store-text={state.buildersLength} />
+          <span data-label='restorers' store-text={state.restorersLength} />
+          <span data-label='shifters' store-text={state.shiftersLength} />
+        </section>
       </main>
     )
   }

@@ -26,4 +26,30 @@
     position: fixed;
     z-index: 3;
   }
+
+  &__stats {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: var(--gutter);
+
+    color: white;
+    font-size: small;
+    justify-content: space-between;
+
+    &, .flexgroup {
+      display: flex;
+      gap: var(--gutter);
+    }
+
+    & > *:first-child {
+      flex: 1;
+    }
+
+    [data-label]::before {
+      content: attr(data-label)':\00a0';
+      color: white;
+    }
+  }
 }
