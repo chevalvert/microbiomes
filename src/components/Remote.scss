@@ -1,0 +1,153 @@
+// TODO: desktop/tablet
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes button--generate {
+  from { transform: none; }
+  to { transform: rotate(1turn); }
+}
+
+@keyframes button--send {
+  0% { transform: none; }
+  30% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+.remote {
+  @include invisible-scroll(y);
+  @include no-select;
+
+  color: white;
+  padding: var(--gutter);
+
+  max-width: 800px;
+  margin: 0 auto;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--gutter) / 2);
+
+  header {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex: 1;
+  }
+
+  header h1 {
+    font-size: 2.8rem;
+    line-height: 1.1;
+    font-weight: normal;
+
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header .select {
+    align-self: baseline;
+  }
+
+  &__renderer {
+    --steps: 30;
+    --grid-color: white;
+
+    position: relative;
+
+    &::after {
+      @include inset(-1px);
+      content: '';
+      opacity: 0.3;
+
+      border-right: 1px solid var(--grid-color);
+      border-bottom: 1px solid var(--grid-color);
+
+      background:
+        repeating-linear-gradient(
+          90deg,
+          var(--grid-color),
+          var(--grid-color) 1px,
+          transparent 1px,
+          transparent calc(100% / var(--steps))
+        ),
+        repeating-linear-gradient(
+          180deg,
+          var(--grid-color),
+          var(--grid-color) 1px,
+          transparent 1px,
+          transparent calc(100% / var(--steps))
+        ),
+      ;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+  }
+
+  &__stats {
+    // TODO
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--gutter);
+
+    span {
+      color: var(--accent);
+      &:first-child {
+        flex: 1;
+      }
+
+      &:not(:first-child) {
+        text-align: right;
+      }
+
+      &::before {
+        content: attr(data-label);
+        display: block;
+        color: white;
+      }
+    }
+  }
+
+  &__toolbar {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-self: flex-end;
+    flex-direction: column;
+    gap: calc(var(--gutter) / 2);
+    background: black;
+
+    .flexgroup {
+      display: flex;
+      gap: calc(var(--gutter) / 2);
+      .button { flex: 1; }
+    }
+
+    .button--send {
+      --background: var(--accent);
+    }
+
+    .button--generate .button__icon {
+      animation: button--generate 300ms;
+    }
+
+    .button--send .button__icon {
+      animation:
+        button--send 600ms,
+        fade-in 1000ms 600ms
+      ;
+    }
+  }
+}

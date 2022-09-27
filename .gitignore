@@ -1,6 +1,7 @@
 build/*
 server/data/*
 .env
+snapshots/*
 
 ####### NODE ########
 .tmp

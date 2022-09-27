@@ -19,11 +19,11 @@
   <link rel='stylesheet' href='bundle.css'>
   {{/if}}
 </head>
-<body class='is-loading' data-env='{{ env }}'>
+<body data-template='main' data-env='{{ env }}'>
   <noscript>JavaScript doit être activé pour pouvoir utiliser cette application.</noscript>
   <script type='text/javascript'>
-    window.ENV = Object.assign({{{json app}}}, { env: '{{env}}' })
+    window.ENV = Object.assign({{{json app}}}, { id: '{{id}}', env: '{{env}}' })
   </script>
-  <script src='/bundle.js'></script>
+  <script src='/main.js'></script>
 </body>
 </html>

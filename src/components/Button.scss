@@ -1,0 +1,62 @@
+.button {
+  @include easing(120ms, (opacity, transform));
+  @include no-select;
+  @include reset-button;
+
+  --active: 3px;
+  --background: white;
+  --color: black;
+  --border-color: black;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+
+  cursor: pointer;
+  white-space: nowrap;
+
+  padding: calc(var(--gutter) / 2);
+  line-height: 1;
+
+  color: var(--color);
+  background: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+
+  &[disabled],
+  &.is-disabled {
+    --background: transparent;
+    --color: gray;
+    --border-color: gray;
+
+    pointer-events: none;
+  }
+
+  &:active {
+    transform: translateY(var(--active));
+  }
+
+  &.is-waiting {
+    cursor: wait;
+  }
+
+  &__text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+  }
+
+  &__icon {
+    line-height: 0;
+  }
+
+  &.is-waiting &__icon {
+    position: relative;
+    color: transparent;
+    &::before {
+      @include loader(1em, 1px, var(--color));
+    }
+  }
+}

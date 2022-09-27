@@ -7,30 +7,22 @@
 
 :root {
   // --theme: defined in app.json
+  --accent: #5181c9;
   --background: var(--theme);
 
   --font-family: 'Styrene';
   --font-size: 1.8rem;
   --line-height: 1.4;
 
-  --gutter: 2rem;
+  --gutter: 3rem;
 }
 
 @include html-no-scroll;
 
 @import 'style/base';
-@import 'components/Scene';
 
-h1 {
-  @include no-select;
-  color: white;
-  position: fixed;
-  z-index: 2;
-  font-weight: normal;
-
-  top: -1em;
-  left: 0;
-  font-size: 10vw;
-  transform-origin: left bottom;
-  transform: rotate(90deg);
-}
+@import 'components/App';
+@import 'components/Button';
+@import 'components/Remote';
+@import 'components/Renderer';
+@import 'components/Select';
