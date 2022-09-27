@@ -1,4 +1,4 @@
-import Hotkeys from 'Hotkeys-js'
+import Hotkeys from 'hotkeys-js'
 
 export default (key, callback) => {
   callback && Hotkeys(key, event => {
