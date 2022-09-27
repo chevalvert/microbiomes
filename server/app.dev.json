@@ -4,6 +4,7 @@
   "theme": "#000000",
 
   "remoteWebSocketServer": "ws://localhost:8080",
+  "ghostRemote": [3000, 10000],
 
   "renderer": {
     "fps": 30,

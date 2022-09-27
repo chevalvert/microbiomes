@@ -4,6 +4,7 @@ import DOMReady from 'utils/dom-is-ready'
 
 import App from 'components/App'
 
+import GhostRemote from 'controllers/GhostRemote'
 import Hotkey from 'controllers/Hotkey'
 import Population from 'controllers/Population'
 import Prng from 'controllers/Prng'
@@ -28,7 +29,7 @@ require('webpack-hot-middleware/client?reload=true')
   Scene.setup()
   Store.raf.frameCount.subscribe(Scene.update)
 
-  Population.randomize()
+  if (window.ENV.ghostRemote) GhostRemote.start()
   WebSocketServer.content.subscribe(data => data.id === window.ENV.id && Population.add(data.creature))
 
   Raf.start()
