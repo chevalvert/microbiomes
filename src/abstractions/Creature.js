@@ -84,7 +84,7 @@ export default class Creature {
     ) - this.radius
   }
 
-  render ({ debug = false } = {}) {
+  render ({ debug = false, blink = false } = {}) {
     this.renderer.draw('creatures', ctx => {
       ctx.save()
       ctx.fillStyle = this.color
@@ -102,7 +102,7 @@ export default class Creature {
       })
 
       // Render path
-      this.renderer.debug(this.center, {
+      !blink && this.renderer.debug(this.center, {
         color: this.debugColor,
         path: this.path,
         lineWidth: 3,

@@ -42,11 +42,15 @@ export function setup () {
 export function update () {
   const debug = Store.renderer.debug.get()
   const now = Date.now()
+  const frameCount = Store.raf.frameCount.get()
 
   Store.renderer.instance.current.clear()
   for (const creature of Store.population.content.get()) {
     creature.update()
-    creature.render({ debug: debug || creature.timestamp + 3000 > now })
+    creature.render({
+      debug: debug || creature.timestamp + (window.ENV.scene.displayNewCreature || -1) > now,
+      blink: !debug && Math.floor((creature.timestamp + frameCount) / 10) % 2 === 0
+    })
   }
 }
 
