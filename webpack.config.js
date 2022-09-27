@@ -77,7 +77,8 @@ module.exports = {
   devtool: isProduction ? 'source-map' : 'eval-source-map',
 
   optimization: {
-    minimize: isProduction
+    // Do not minimize output, because some parts of the code need to display <instance>.constructor.name
+    minimize: false
   },
 
   plugins: [
